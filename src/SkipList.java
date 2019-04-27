@@ -1,5 +1,6 @@
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Random;
@@ -91,7 +92,7 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
 
     // Special case: first element in list
     if (this.height == 0) {
-      int newLevel = randomLevel();
+      int newLevel = randomHeight();
       // Make and insert new node
       SLNode<K, V> newNode = new SLNode<K, V>(key, value, newLevel);
       this.height = newLevel;
@@ -100,7 +101,6 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
       }
       return null;
     }
-
     SLNode<K, V>[] update = new SLNode[SkipList.INITIAL_HEIGHT];
     SLNode<K,V> current = new SLNode<K,V>(null, null, this.height);
     current.next = front;
@@ -120,18 +120,18 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
       current.value = value;
       return cache;
     }
-    int newLevel = randomLevel();
+    int newLevel = randomHeight();
     // Make and insert new node
     SLNode<K, V> newNode = new SLNode<K, V>(key, value, newLevel);
     if (newLevel > this.height) {
-      for (int i = this.height - 1; i < newLevel; i++) {
+      for (int i = this.height; i < newLevel; i++) {
         front.set(i, newNode);
       }
     }
-
     for (int i = 0; i < newLevel; i++) {
       if (i < this.height && update[i].next != null) {
         newNode.next.set(i, update[i].next.get(i));
+        update[i].next.set(i, newNode);
       } else {
         newNode.next.set(i, null);
       }
@@ -140,16 +140,6 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
     this.size++;
     return null;
   }// set(K,V)
-
-  private int randomLevel() {
-    int newLevel = 1;
-    int random = rand.nextInt(1);
-    while (random < this.prob) {
-      newLevel++;
-      random = rand.nextInt(1);
-    }
-    return Math.min(newLevel, SkipList.INITIAL_HEIGHT);
-  }
 
   @Override
   public V get(K key) {
