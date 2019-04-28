@@ -20,16 +20,15 @@ public class SkipListTests {
   /**
    * Names of some numbers.
    */
-  static final String numbers[] =
-      {"zero", "one", "two", "three", "four", "five", "six", "seven", "eight",
-          "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen",
-          "sixteen", "seventeen", "eighteen", "nineteen"};
+  static final String numbers[] = {"zero", "one", "two", "three", "four", "five", "six", "seven",
+      "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen",
+      "seventeen", "eighteen", "nineteen"};
 
   /**
    * Names of more numbers.
    */
-  static final String tens[] = {"", "", "twenty", "thirty", "forty", "fifty",
-      "sixty", "seventy", "eighty", "ninety"};
+  static final String tens[] =
+      {"", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"};
 
   // +--------+----------------------------------------------------------
   // | Fields |
@@ -62,8 +61,8 @@ public class SkipListTests {
   // +---------+
 
   /**
-   * Set up everything.  Unfortunately, @BeforeEach doesn't seem
-   * to be working, so we do this manually.
+   * Set up everything. Unfortunately, @BeforeEach doesn't seem to be working, so we do this
+   * manually.
    */
   @BeforeEach
   public void setup() {
@@ -75,9 +74,9 @@ public class SkipListTests {
   /**
    * Dump a SkipList to stderr.
    */
-  static <K,V> void dump(SkipList<K,V> map) {
+  static <K, V> void dump(SkipList<K, V> map) {
     System.err.print("[");
-    map.forEach((key,value) -> System.err.println(key + ":" + value + " "));
+    map.forEach((key, value) -> System.err.println(key + ":" + value + " "));
     System.err.println("]");
   } // dump
 
@@ -139,6 +138,7 @@ public class SkipListTests {
       return "really big";
     }
   } // value(i, skipZero)
+
 
   // +--------------------+------------------------------------------
   // | Logging operations |
@@ -202,7 +202,7 @@ public class SkipListTests {
   // +-------------+
 
   /**
-   * A really simple test.  Add an element and make sure that it's there.
+   * A really simple test. Add an element and make sure that it's there.
    */
   @Test
   public void simpleTest() {
@@ -215,11 +215,128 @@ public class SkipListTests {
   /**
    * Another simple test. The list should not contain anything when we start out.
    */
+
   @Test
   public void emptyTest() {
     setup();
     assertFalse(strings.containsKey("hello"));
   } // emptyTest()
+
+  // +--------------------------+---------------------------------------
+  // | Added Tests (Question 2) |
+  // +--------------------------+
+
+  /**
+   * Verify that adding elements in order produces a sorted list
+   */
+  @Test
+  public void testInOrder() {
+    setup();
+    for (int i = 0; i < 100; i++) {
+      set(i);
+    }
+    if (!inOrder(ints.keys())) {
+      System.err.println("inOrder() failed in testInOrder()");
+      printTest();
+      dump(ints);
+      System.err.println();
+      fail("The instructions did not produce a sorted list.");
+    } // if the elements are not in order.
+  }
+
+
+  /**
+   * Verify that adding elements backwards produces a sorted list
+   */
+  @Test
+  public void testBackwards() {
+    setup();
+    for (int i = 100; i > 0; i--) {
+      set(i);
+    }
+    if (!inOrder(ints.keys())) {
+      System.err.println("inOrder() failed in testInOrder()");
+      printTest();
+      dump(ints);
+      System.err.println();
+      fail("The instructions did not produce a sorted list.");
+    } // if the elements are not in order.
+  }
+  
+
+  /**
+   * Verify that adding duplicate elements replaces them in list
+   */
+  @Test
+  public void testDuplicates() {
+    SkipList<String, String> skplst = new SkipList<String, String>();
+    skplst.set("apple", "apple");
+    skplst.set("banana", "banana");
+    skplst.set("cashew", "cashew");
+    assertEquals("apple", skplst.get("apple"));
+    assertEquals("banana", skplst.get("banana"));
+    assertEquals("cashew", skplst.get("cashew"));
+    
+    skplst.set("apple", "replaced");
+    skplst.set("banana", "replaced");
+    skplst.set("cashew", "replaced");
+    
+    assertEquals("replaced", skplst.get("apple"));
+    assertEquals("replaced", skplst.get("banana"));
+    assertEquals("replaced", skplst.get("cashew"));
+  }
+
+  /**
+   * Verify that size of list is as expected
+   */
+  @Test
+  public void testSize() {
+    setup();
+    for (int i = 1; i < 100; i++) {
+      ints.set(i, Integer.toString(i));;
+      assertEquals(i, ints.size);
+    }
+  }
+
+  /**
+   * Verify that elements were removed/added successfully
+   */
+  @Test
+  public void simpleAddRemove() {
+    setup();
+    set("apple");
+    set("banana");
+    assertTrue(strings.containsKey("apple"));
+    assertTrue(strings.containsKey("banana"));
+    set("car");
+    assertTrue(strings.containsKey("car"));
+    remove("apple");
+    remove("banana");
+    assertFalse(strings.containsKey("apple"));
+    assertFalse(strings.containsKey("banana"));
+    remove("car");
+    assertFalse(strings.containsKey("car"));
+  }
+
+
+  /**
+   * Verify that the remove method returns expected values
+   */
+  @Test
+  public void removeReturnedInOrder() {
+    SkipList<String, String> letters = new SkipList<String, String>();
+    String alph = "abcdefghijklmnopqrstuvwxyz";
+    for (int i = 0; i < 26; i++) {
+      char ch = alph.charAt(i);
+      String let = Character.toString(ch);
+      letters.set(let, let);
+    }
+    for (int i = 0; i < 26; i++) {
+      String removed = Character.toString(alph.charAt(i));
+      assertEquals(removed, letters.remove(removed));
+    }
+  }
+
 
   // +-----------------+-------------------------------------------------
   // | RandomizedTests |
@@ -289,7 +406,7 @@ public class SkipListTests {
           set(rand);
         } // if it's not already there.
         if (!ints.containsKey(rand)) {
-          log("After adding " + rand + ", contains(" + rand +") fails");
+          log("After adding " + rand + ", contains(" + rand + ") fails");
           ok = false;
         } // if (!ints.contains(rand))
       } // if we add
@@ -298,7 +415,7 @@ public class SkipListTests {
         remove(rand);
         keys.remove((Integer) rand);
         if (ints.containsKey(rand)) {
-          log("After removing " + rand + ", contains(" + rand +") succeeds");
+          log("After removing " + rand + ", contains(" + rand + ") succeeds");
           ok = false;
         } // if ints.contains(rand)
       } // if we remove
@@ -318,10 +435,18 @@ public class SkipListTests {
       fail("Operations failed");
     } // if (!ok)
   } // randomTest()
-  
+
+
+
   public static void main(String[] args) {
     SkipListTests slt = new SkipListTests();
     slt.setup();
     slt.simpleTest();
+    slt.emptyTest();
+    slt.testContainsOnlyAdd();
+    slt.testOrdered();
+    slt.randomTest();
+    slt.testBackwards();
+    slt.testInOrder();
   } // main
 } // class SkipListTests

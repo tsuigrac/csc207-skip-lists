@@ -96,13 +96,14 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
       // Make and insert new node
       SLNode<K, V> newNode = new SLNode<K, V>(key, value, newLevel);
       this.height = newLevel;
-      for(int i = 0; i < newLevel; i++) {
+      for (int i = 0; i < newLevel; i++) {
         front.set(i, newNode);
       }
+      this.size++;
       return null;
     }
     SLNode<K, V>[] update = new SLNode[SkipList.INITIAL_HEIGHT];
-    SLNode<K,V> current = new SLNode<K,V>(null, null, this.height);
+    SLNode<K, V> current = new SLNode<K, V>(null, null, this.height);
     current.next = front;
     for (int i = this.height - 1; i >= 0; i--) {
       while (current.next.get(i) != null
@@ -171,7 +172,7 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
     }
     V cache = null;
     SLNode<K, V> update[] = new SLNode[SkipList.INITIAL_HEIGHT];
-    SLNode<K, V> current = new SLNode<K,V>(null, null, this.height);
+    SLNode<K, V> current = new SLNode<K, V>(null, null, this.height);
     current.next = front;
     for (int i = this.height - 1; i >= 0; i--) {
       while (current.next.get(i) != null
@@ -197,21 +198,24 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
       size--;
       return cache;
     } else {
-      throw new IndexOutOfBoundsException("key not found");
+      return null;
     }
   } // remove(K)
 
 
   // HELPER METHOD
   public SLNode<K, V> search(K key) {
-    SLNode<K, V> current = this.front.get(this.height - 1);
+    SLNode<K, V> current = new SLNode<K, V>(null, null, this.height);
+    current.next = front;
     for (int i = this.height - 1; i >= 0; i--) {
       while (current.next.get(i) != null && comparator.compare(current.next.get(i).key, key) < 0) {
         current = current.next.get(i);
       }
     }
-    current = current.next.get(0);
-    if (comparator.compare(current.key, key) == 0) {
+    if (current.next != null) {
+      current = current.next.get(0);
+    }
+    if (current != null && this.comparator.compare(current.key, key) == 0) {
       return current;
     } else {
       return null;
@@ -264,8 +268,8 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
 
   @Override
   public void forEach(BiConsumer<? super K, ? super V> action) {
-    SLNode<K,V> current = front.get(0);
-    while(current != null) {
+    SLNode<K, V> current = front.get(0);
+    while (current != null) {
       action.accept(current.key, current.value);
       current = current.next.get(0);
     }
