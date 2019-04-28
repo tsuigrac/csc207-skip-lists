@@ -9,17 +9,11 @@ public class SkipListExpt {
         "science", "skip", "list", "binary", "search", "tree"};
 
     for (String str : strings) {
-      pen.println("Adding " + str);
+     // pen.println("Adding " + str);
       list.set(str, str);
-      list.dump(pen);
-      pen.println();
+     // list.dump(pen);
+      //pen.println();
     } // for
-
-    for (String str : strings) {
-      pen.println("Removing " + str);
-      list.remove(str);
-      list.dump(pen);
-      pen.println();
-    } // for
+    list.forEach((key, value)->System.out.println(key + ": " + value));
   }
 }
