@@ -26,3 +26,7 @@ Time Testing Results (in nanoseconds)
 
 
 Overall, I found that it was logarithmic for all three methods in the beginning but then turned linear or exponential. This may be because I decided to make 16 the max height instead of making it expandable, so when the array had too many elements it would have been slower because the nodes were shorter. 
+
+
+Here is the link to the graphs/data:
+https://docs.google.com/spreadsheets/d/16OwDtKPziMPR3gIxvJEAHVR5IRaHrQt9cwid2vRgkNM/edit?usp=sharing
